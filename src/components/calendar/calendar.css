@@ -1,0 +1,37 @@
+.calendar-container {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 2px solid skyblue;
+    width: 302px;
+    background-color: white;
+}
+
+.calendar {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.calendar th,
+.calendar td {
+    text-align: center;
+    padding: 5px;
+    border: 1px solid #ccc;
+}
+
+.calendar th {
+    background: #f0f0f0;
+}
+
+.calendar .current-day {
+    background-color: #4285f4;
+    color: white;
+    border-radius: 50%;
+}
+
+.calendar .selected-day {
+    background-color: yellow;
+    border-radius: 50%;
+}
