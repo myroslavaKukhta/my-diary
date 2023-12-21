@@ -9,7 +9,7 @@ const AddItemForm = (props: AddItemFormPropsType) => {
     let [title, setTitle] = useState("")
     let [error, setError] = useState<string | null>(null)
 
-    const addItem = () => {
+    const addTask = () => {
         if (title.trim() !== '') {
             props.addItem(title.trim(), props.id);
             setTitle('')
@@ -25,7 +25,7 @@ const AddItemForm = (props: AddItemFormPropsType) => {
     const onKeyPressHandler = (e: KeyboardEvent<HTMLInputElement>) => {
         setError(null);
         if (e.key === 'Enter') {
-            addItem()
+            addTask()
         }
     }
     return (
@@ -37,10 +37,12 @@ const AddItemForm = (props: AddItemFormPropsType) => {
             />
 
 
-            <button onClick={addItem}>+</button>
+            <button onClick={addTask}>+</button>
             {error && <div className="error-message">{error}</div>}
         </div>
     )
 }
 
 export default AddItemForm;
+
+
