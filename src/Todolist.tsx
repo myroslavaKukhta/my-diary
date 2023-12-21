@@ -1,6 +1,7 @@
-import React, {ChangeEvent, useState, KeyboardEvent} from 'react';
+import React, {ChangeEvent} from 'react';
 import {FilterValuesType} from './App';
 import AddItemForm from "./AddItemForm";
+import {EditableSpan} from "./EditableSpanPropsType";
 
 export type TaskType = {
     id: string
@@ -14,7 +15,7 @@ type PropsType = {
     tasks: Array<TaskType>
     removeTask: (taskId: string, todolistId: string) => void
     changeFilter: (value: FilterValuesType, todolistId: string) => void
-    addItem: (title: string, todolistId: string) => void
+    addTask: (title: string, todolistId: string) => void
     changeTaskStatus: (id: string, isDone: boolean, todolistId: string) => void
     removeTodolist: (id: string) => void
     filter: FilterValuesType
@@ -22,17 +23,20 @@ type PropsType = {
 
 
 export function Todolist(props: PropsType) {
-
     const removeTodolist = () => props.removeTodolist(props.id)
     const onAllClickHandler = () => props.changeFilter("all", props.id);
     const onActiveClickHandler = () => props.changeFilter("active", props.id);
     const onCompletedClickHandler = () => props.changeFilter("completed", props.id);
 
+    const addTask = (title: string) => {
+        props.addTask(title, props.id);
+    }
+
     return <div>
         <h3> {props.title}
             <button onClick={removeTodolist}>x</button>
         </h3>
-        <AddItemForm id={props.id} addItem={props.addItem}/>
+        <AddItemForm id={props.id} addItem={addTask}/>
         <ul>
             {
                 props.tasks.map(t => {
@@ -44,7 +48,7 @@ export function Todolist(props: PropsType) {
 
                     return <li key={t.id} className={t.isDone ? "is-done" : ""}>
                         <input type="checkbox" onChange={onChangeHandler} checked={t.isDone}/>
-                        <span>{t.title}</span>
+                        <EditableSpan title={t.title} />
                         <button onClick={onClickHandler}>x</button>
                     </li>
                 })
@@ -63,5 +67,4 @@ export function Todolist(props: PropsType) {
         </div>
     </div>
 }
-
 
