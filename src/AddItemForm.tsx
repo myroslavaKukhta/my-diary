@@ -40,7 +40,12 @@ const AddItemForm = (props: AddItemFormPropsType) => {
 
     return (
         <div>
-            <TextField id="outlined-basic" label="Outlined" variant="outlined" value={title} size="small"
+            <TextField error={!!error}
+                       id="outlined-basic"
+                       label={error ? 'Error' : 'Type smth...'}
+                       variant="outlined"
+                       value={title}
+                       size="small"
                    onChange={onChangeHandler}
                    onKeyPress={onKeyPressHandler}
                    className={error ? 'error' : ''}
