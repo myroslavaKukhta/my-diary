@@ -29,17 +29,6 @@ function App() {
         {id: todolistId2, title: "What to buy", filter: "all"}
     ]);
 
-    let [tasks, setTasks] = useState<TasksStateType>({
-        [todolistId1]: [
-            {id: v1(), title: "HTML&CSS", isDone: true},
-            {id: v1(), title: "JS", isDone: true},
-        ],
-        [todolistId2]: [
-            {id: v1(), title: "Milk", isDone: true},
-            {id: v1(), title: "React Book", isDone: true}
-        ]
-    });
-
     function removeTask(id: string, todolistId: string) {
         let todolistTasks = tasks[todolistId];
         tasks[todolistId] = todolistTasks.filter(t => t.id !== id);
@@ -70,6 +59,18 @@ function App() {
             setTasks({...tasks});
         }
     }
+
+
+    let [tasks, setTasks] = useState<TasksStateType>({
+        [todolistId1]: [
+            {id: v1(), title: "HTML&CSS", isDone: true},
+            {id: v1(), title: "JS", isDone: true},
+        ],
+        [todolistId2]: [
+            {id: v1(), title: "Milk", isDone: true},
+            {id: v1(), title: "React Book", isDone: true}
+        ]
+    });
 
     function changeFilter(value: FilterValuesType, todolistId: string) {
         let todolist = todolists.find(tl => tl.id === todolistId);
