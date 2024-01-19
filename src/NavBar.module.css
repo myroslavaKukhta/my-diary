@@ -1,0 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Shojumaru&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap');
+nav{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: darkslategray;
+    height: 77px;
+    width: 100vw;
+    z-index: 1;
+}
+
+nav a{
+    text-decoration: none;
+    font-family: 'Shojumaru', cursive;
+}
+
+ul{
+    display: flex;
+    align-items: center;
+}
+
+li{
+    list-style: none;
+    padding-left: 15px;
+    margin: 0 20px;
+    font-size: 40px;
+}
+
+li a{
+    color: white;
+    text-decoration: none;
+    font-size: 20px;
+}
+
+span{
+    color: white;
+    font-size: 30px;
+}
+
+a:hover{
+    color: gold;
+    text-decoration: underline;
+}
+
+img { margin: 0 10px}
+
+.clock {
+    font-family: 'Shojumaru', cursive;
+    font-size: 2em;
+    color: white;
+    padding: 10px;
+    display: inline-block;
+    margin: 10px 0;
+}

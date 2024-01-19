@@ -1,153 +1,126 @@
-import React, {useState} from 'react';
-import './App.css';
-import {TaskType, Todolist} from './Todolist';
-import {v1} from 'uuid';
-import AddItemForm from "./AddItemForm";
-import ButtonAppBar from "./ButtonAppBar";
-import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { NavBar } from './NavBar';
+import DayTodo from './DayTodo';
+import WeekTodo from './WeekTodo';
+import Start from './Start';
+import { saveDataToLocalStorage, loadDataFromLocalStorage } from './localStorageUtils';
+import { v1 } from 'uuid';
+import Home from "./Home";
+import News from "./News";
 
-export type FilterValuesType = "all" | "active" | "completed";
+export type FilterValuesType = 'all' | 'active' | 'completed';
 
-export type TodolistType = {
+interface Task {
     id: string;
     title: string;
-    filter: FilterValuesType;
-}
-
-type TasksStateType = {
-    [key: string]: Array<TaskType>;
+    isDone: boolean;
 }
 
 function App() {
-    let todolistId1 = v1();
-    let todolistId2 = v1();
-
-    let [todolists, setTodolists] = useState<Array<TodolistType>>([
-        {id: todolistId1, title: "What to learn", filter: "all"},
-        {id: todolistId2, title: "What to buy", filter: "all"}
-    ]);
-
-    function removeTask(id: string, todolistId: string) {
-        let todolistTasks = tasks[todolistId];
-        tasks[todolistId] = todolistTasks.filter(t => t.id !== id);
-        setTasks({...tasks});
-    }
-
-    function addTask(title: string, todolistId: string) {
-        let task = {id: v1(), title: title, isDone: false};
-        let todolistTasks = tasks[todolistId];
-        tasks[todolistId] = [task, ...todolistTasks];
-        setTasks({...tasks});
-    }
-
-    function changeStatus(id: string, isDone: boolean, todolistId: string) {
-        let todolistTasks = tasks[todolistId];
-        let task = todolistTasks.find(t => t.id === id);
-        if (task) {
-            task.isDone = isDone;
-            setTasks({...tasks});
-        }
-    }
-
-    function changeTaskTitle(id: string, newTitle: string, todolistId: string) {
-        let todolistTasks = tasks[todolistId];
-        let task = todolistTasks.find(t => t.id === id);
-        if (task) {
-            task.title = newTitle;
-            setTasks({...tasks});
-        }
-    }
+    const [isRegistered, setIsRegistered] = useState(false);
+    const [tasks, setTasks] = useState<Task[]>([]);
+    const [filter, setFilter] = useState<FilterValuesType>('all');
+    const [tasksForTodoList, setTasksForTodoList] = useState<Task[]>(tasks);
 
 
-    let [tasks, setTasks] = useState<TasksStateType>({
-        [todolistId1]: [
-            {id: v1(), title: "HTML&CSS", isDone: true},
-            {id: v1(), title: "JS", isDone: true},
-        ],
-        [todolistId2]: [
-            {id: v1(), title: "Milk", isDone: true},
-            {id: v1(), title: "React Book", isDone: true}
-        ]
-    });
-
-    function changeFilter(value: FilterValuesType, todolistId: string) {
-        let todolist = todolists.find(tl => tl.id === todolistId);
-        if (todolist) {
-            todolist.filter = value;
-            setTodolists([...todolists]);
-        }
-    }
-
-    function addTodoList(title: string) {
-        let newTodolistId = v1();
-        let newTodoList: TodolistType = {id: newTodolistId, title: title, filter: 'all'};
-        setTodolists([newTodoList, ...todolists]);
-        setTasks({
-            ...tasks,
-            [newTodolistId]: []
-        });
-    }
-
-    function removeTodolist(id: string) {
-        setTodolists(todolists.filter(tl => tl.id !== id));
-        const newTasks = {...tasks};
-        delete newTasks[id];
+    const addTask = (title: string) => {
+        let task: Task = { id: v1(), title: title, isDone: false };
+        let newTasks = [task, ...tasksForTodoList];
         setTasks(newTasks);
-    }
+        saveDataToLocalStorage('tasks', newTasks);
+        setTasksForTodoList(newTasks);
+    };
 
-    function changeTodolistTitle(id: string, newTitle: string) {
-        const todolist = todolists.find(tl => tl.id === id);
-        if (todolist) {
-            todolist.title = newTitle;
-            setTodolists([...todolists]);
+    const removeTask = (id: string) => {
+        let filteredTasks = tasksForTodoList.filter((task) => task.id !== id);
+        setTasks(filteredTasks);
+        saveDataToLocalStorage('tasks', filteredTasks);
+        setTasksForTodoList(filteredTasks);
+    };
+
+    const filterTasks = (value: FilterValuesType) => {
+        if (value === 'all') {
+            setTasksForTodoList(tasks);
+        } else if (value === 'active') {
+            setTasksForTodoList(tasks.filter((task) => !task.isDone));
+        } else if (value === 'completed') {
+            setTasksForTodoList(tasks.filter((task) => task.isDone));
         }
-    }
+    };
+
+    const changeFilter = (value: FilterValuesType) => {
+        setFilter(value);
+        filterTasks(value);
+    };
+
+    const changeTaskStatus = (taskId: string) => {
+        setTasks((prevTasks) => {
+            const updatedTasks = prevTasks.map((task) =>
+                task.id === taskId ? { ...task, isDone: !task.isDone } : task
+            );
+            saveDataToLocalStorage('tasks', updatedTasks);
+            filterTasks(filter);
+            return updatedTasks;
+        });
+    };
+
+
+    const handleRegistration = () => {
+        setIsRegistered(true);
+    };
 
     return (
-        <div className="App">
-            <ButtonAppBar/>
-            <Container>
-                <Grid container style={{padding:'20px'}}>
-                    <AddItemForm id={'dfdf'} addItem={addTodoList}/>
-                </Grid>
-                <Grid container spacing={3}>
-                    {
-                        todolists.map(tl => {
-                            let allTodolistTasks = tasks[tl.id];
-                            let tasksForTodolist = allTodolistTasks;
-
-                            if (tl.filter === "active") {
-                                tasksForTodolist = allTodolistTasks.filter(t => !t.isDone);
-                            }
-                            if (tl.filter === "completed") {
-                                tasksForTodolist = allTodolistTasks.filter(t => t.isDone);
-                            }
-
-                            return <Grid item>
-                                <Paper square elevation={6} style={{padding:'20px'}}>
-                            <Todolist
-                                key={tl.id}
-                                id={tl.id}
-                                title={tl.title}
-                                tasks={tasksForTodolist}
-                                removeTask={removeTask}
-                                changeFilter={changeFilter}
-                                addTask={addTask}
-                                changeTaskStatus={changeStatus}
-                                changeTaskTitle={changeTaskTitle}
-                                filter={tl.filter}
-                                removeTodolist={removeTodolist}
-                                changeTodolistTitle={changeTodolistTitle}
+        <Router>
+            <div className="App">
+                <NavBar />
+                <Routes>
+                    <Route path="/" element={<Start handleRegistration={handleRegistration} isRegistered={isRegistered} />} />
+                    {isRegistered && (
+                        <>
+                            <Route
+                                path="/home"
+                                element={
+                                    <Home/>
+                                }
                             />
-                                </Paper>
-                            </Grid>
-                        })
-                    }
-                </Grid>
-            </Container>
-        </div>
+                            <Route
+                                path="/day"
+                                element={
+                                    <DayTodo
+                                        title="What to do today"
+                                        tasks={tasksForTodoList}
+                                        addTask={addTask}
+                                        removeTask={removeTask}
+                                        changeFilter={changeFilter}
+                                        changeTaskStatus={changeTaskStatus}
+                                    />
+                                }
+                            />
+                            <Route
+                                path="/week"
+                                element={
+                                    <WeekTodo
+                                        title="What to do this week"
+                                        tasks={tasksForTodoList}
+                                        addTask={addTask}
+                                        removeTask={removeTask}
+                                        changeFilter={changeFilter}
+                                        changeTaskStatus={changeTaskStatus}
+                                    />
+                                }
+                            />
+                            <Route
+                                path="/news"
+                                element={
+                                    <News />
+                                }
+                            />
+                        </>
+                    )}
+                </Routes>
+            </div>
+        </Router>
     );
 }
 

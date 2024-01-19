@@ -1,0 +1,22 @@
+.dailyEntryContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    border-radius: 8px;
+}
+
+
+.button {
+    width: 90%;
+    padding: 8px;
+    margin: 8px 10px;
+    background-color: darkslategrey;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-family: 'Shojumaru', cursive;
+}
